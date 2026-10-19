@@ -1,12 +1,14 @@
-
 from flask import Flask, render_template, request
+from return_checker import check_return_eligibility
+
 
 app = Flask(__name__)
 
 
-
 @app.route("/", methods=["GET", "POST"])
 def home():
+    result = None
+
     if request.method == "POST":
         category = request.form.get("category")
         delivery_date = request.form.get("delivery_date")
@@ -14,13 +16,17 @@ def home():
         unused = request.form.get("unused") == "yes"
         tags_attached = request.form.get("tags_attached") == "yes"
 
-        print("Category:", category)
-        print("Delivery Date:", delivery_date)
-        print("Request Date:", request_date)
-        print("Unused:", unused)
-        print("Tags Attached:", tags_attached)
+        result = check_return_eligibility(
+            category,
+            delivery_date,
+            request_date,
+            unused,
+            tags_attached
+        )
 
-    return render_template("index.html")
+        print(result)
+
+    return render_template("index.html", result=result)
 
 
 if __name__ == "__main__":

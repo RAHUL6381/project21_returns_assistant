@@ -1,63 +1,83 @@
-
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Returns Assistant</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Online Store Returns Assistant</h1>
     <p>Check whether your product is eligible for a return.</p>
 
     <form method="POST" action="/">
-        <label for="category">Product Category:</label>
-        <select id="category" name="category" required>
-            <option value="">Select category</option>
-            <option value="clothing">Clothing</option>
-            <option value="electronics">Electronics</option>
-            <option value="personal_care">Personal Care</option>
-        </select>
+      <label for="category">Product Category:</label>
+      <select id="category" name="category" required>
+        <option value="">Select category</option>
+        <option value="clothing">Clothing</option>
+        <option value="electronics">Electronics</option>
+        <option value="personal_care">Personal Care</option>
+      </select>
 
-        <br><br>
+      <br /><br />
 
-        <label for="delivery_date">Delivery Date:</label>
-        <input type="date" id="delivery_date"
-               name="delivery_date" required>
+      <label for="delivery_date">Delivery Date:</label>
+      <input type="date" id="delivery_date" name="delivery_date" required />
 
-        <br><br>
+      <br /><br />
 
-        <label for="request_date">Request Date:</label>
-        <input type="date" id="request_date"
-               name="request_date" required>
+      <label for="request_date">Request Date:</label>
+      <input type="date" id="request_date" name="request_date" required />
 
-        <br><br>
+      <br /><br />
 
-        <p>Is the product unused?</p>
-        <label>
-            <input type="radio" name="unused" value="yes" required>
-            Yes
-        </label>
-        <label>
-            <input type="radio" name="unused" value="no">
-            No
-        </label>
+      <p>Is the product unused?</p>
+      <label>
+        <input type="radio" name="unused" value="yes" required />
+        Yes
+      </label>
+      <label>
+        <input type="radio" name="unused" value="no" />
+        No
+      </label>
 
-        <br><br>
+      <br /><br />
 
-        <p>Are the tags attached?</p>
-        <label>
-            <input type="radio" name="tags_attached" value="yes" required>
-            Yes
-        </label>
-        <label>
-            <input type="radio" name="tags_attached" value="no">
-            No
-        </label>
+      <p>Are the tags attached?</p>
+      <label>
+        <input type="radio" name="tags_attached" value="yes" required />
+        Yes
+      </label>
+      <label>
+        <input type="radio" name="tags_attached" value="no" />
+        No
+      </label>
 
-        <br><br>
+      <br /><br />
 
-        <button type="submit">Check Return Eligibility</button>
+      <button type="submit">Check Return Eligibility</button>
     </form>
-</body>
+
+    {% if result %}
+    <hr />
+    <h2>Return Eligibility Result</h2>
+
+    {% if result.eligible %}
+    <h3>Eligible for Return</h3>
+    {% else %}
+    <h3>Not Eligible for Return</h3>
+    {% endif %}
+
+    <p>Days Since Delivery: {{ result.days_since_delivery }}</p>
+
+    {% if result.reasons %}
+    <h3>Reasons:</h3>
+    <ul>
+      {% for reason in result.reasons %}
+      <li>{{ reason }}</li>
+      {% endfor %}
+    </ul>
+    {% else %}
+    <p>No issues found. Your product meets the return criteria.</p>
+    {% endif %} {% endif %}
+  </body>
 </html>
