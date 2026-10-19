@@ -3,7 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
     <title>Returns Assistant</title>
   </head>
   <body>
@@ -58,7 +61,32 @@
       <button type="submit">Check Return Eligibility</button>
     </form>
 
-    {% if result %}
+    <hr />
+
+    <h2>Returns Policy Chatbot</h2>
+    <p>Ask questions about returns, exchanges, and refunds.</p>
+
+    <form method="POST" action="/chat">
+      <label for="question">Your Question:</label>
+
+      <input
+        type="text"
+        id="question"
+        name="question"
+        placeholder="When does refund processing begin?"
+        value="{{ question or '' }}"
+        required
+      />
+
+      <button type="submit">Ask Assistant</button>
+    </form>
+
+    {% if chat_answer %}
+    <div class="result">
+      <h3>Assistant's Answer</h3>
+      <p>{{ chat_answer }}</p>
+    </div>
+    {% endif %} {% if result %}
     <hr />
     <h2>Return Eligibility Result</h2>
 
