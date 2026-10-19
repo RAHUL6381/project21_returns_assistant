@@ -1,0 +1,14 @@
+[
+  {
+    "source": "return_policy.txt",
+    "text": "Return eligibility depends on the product category.\n\nClothing may be returned within 15 calendar days after\ndelivery if unused and its tags are attached.\n\nElectronics may be returned within seven calendar days\nafter delivery if unused.\n\nPersonal-care items are not returnable under this policy.\n\nThe delivery date is day zero. \nThe final permitted day is included in the return window."
+  },
+  {
+    "source": "exchange_policy.txt",
+    "text": "Clothing size exchanges follow the same eligibility\nconditions as clothing returns.\n\nAn exchange depends on replacement stock availability.\nThe assistant cannot check live stock.\n\nProducts showing signs of use do not qualify for\nstandard return or exchange."
+  },
+  {
+    "source": "refund_procedure.txt",
+    "text": "Customers must provide the order reference when submitting\nan eligible return request.\n\nRefund processing begins after the returned item is\nreceived and inspected.\n\nAn eligibility result does not submit a return request\nor guarantee a refund.\n\nManufacturing-defect claims follow a separate process\nnot covered by this assignment."
+  }
+]

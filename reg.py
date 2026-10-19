@@ -1,6 +1,9 @@
 
 from pathlib import Path
 from sentence_transformers import SentenceTransformer
+import faiss
+import json
+import numpy as np
 
 # Folder containing the policy documents
 DATA_DIR = Path(__file__).parent / "data"
@@ -43,19 +46,6 @@ def split_into_chunks(documents, chunk_size=500, overlap=50):
     return chunks
 
 
-# if __name__ == "__main__":
-#     documents = load_policy_documents()
-#     chunks = split_into_chunks(documents)
-
-#     print("Documents loaded:", len(documents))
-#     print("Chunks created:", len(chunks))
-
-#     for i, chunk in enumerate(chunks, start=1):
-#         print(f"\nChunk {i} | Source: {chunk['source']}")
-#         print(chunk["text"])
-
-
-
 def generate_embeddings(chunks):
     # Load a pretrained embedding model
     model = SentenceTransformer("all-MiniLM-L6-v2")
@@ -73,12 +63,36 @@ def generate_embeddings(chunks):
     return model, embeddings
 
 
+def store_embeddings(embeddings, chunks):
+    # Create a FAISS index for normalized embeddings
+    dimension = embeddings.shape[1]
+    index = faiss.IndexFlatIP(dimension)
+
+    # Store embeddings as 32-bit floating-point numbers
+    index.add(np.asarray(embeddings, dtype=np.float32))
+
+    # Create the data folder if it doesn't exist
+    DATA_DIR.mkdir(parents=True, exist_ok=True)
+
+    # Save the FAISS index
+    faiss.write_index(index, str(DATA_DIR / "policy.index"))
+
+    # Save chunk text and source information
+    with open(DATA_DIR / "policy_chunks.json", "w", encoding="utf-8") as file:
+        json.dump(chunks, file, ensure_ascii=False, indent=2)
+
+    return index
+
+
+
 if __name__ == "__main__":
     documents = load_policy_documents()
     chunks = split_into_chunks(documents)
 
     model, embeddings = generate_embeddings(chunks)
+    index = store_embeddings(embeddings, chunks)
 
     print("Documents loaded:", len(documents))
     print("Chunks created:", len(chunks))
     print("Embeddings shape:", embeddings.shape)
+    print("FAISS index saved successfully!")
