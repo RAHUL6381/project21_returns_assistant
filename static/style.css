@@ -1,0 +1,116 @@
+
+/* General page styling */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f6f9;
+    color: #333;
+    margin: 0;
+    padding: 30px 15px;
+}
+
+/* Main heading */
+h1 {
+    text-align: center;
+    color: #f97316;
+    margin-bottom: 10px;
+}
+
+body > p {
+    text-align: center;
+    color: #666;
+}
+
+/* Form container */
+form {
+    max-width: 550px;
+    margin: 25px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+}
+
+/* Form labels and text */
+label,
+form p {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+select,
+input[type="date"] {
+    width: 100%;
+    padding: 12px;
+    margin-top: 8px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 15px;
+    background-color: #fff;
+}
+
+/* Radio buttons */
+input[type="radio"] {
+    margin-right: 6px;
+    accent-color: #f97316;
+}
+
+/* Submit button */
+button {
+    width: 100%;
+    padding: 13px;
+    background-color: #f97316;
+    color: white;
+    border: none;
+    border-radius: 7px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.2s;
+}
+
+button:hover {
+    background-color: #ea580c;
+}
+
+/* Result section */
+body > hr {
+    display: none;
+}
+
+h2,
+h3,
+body > ul {
+    max-width: 550px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+h2 {
+    margin-top: 30px;
+    color: #222;
+}
+
+h3 {
+    padding: 12px;
+    background-color: #fff;
+    border-radius: 7px;
+}
+
+body > ul {
+    line-height: 1.8;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    body {
+        padding: 20px 12px;
+    }
+
+    form {
+        padding: 20px;
+    }
+}
