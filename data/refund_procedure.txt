@@ -1,0 +1,11 @@
+Customers must provide the order reference when submitting
+an eligible return request.
+
+Refund processing begins after the returned item is
+received and inspected.
+
+An eligibility result does not submit a return request
+or guarantee a refund.
+
+Manufacturing-defect claims follow a separate process
+not covered by this assignment.

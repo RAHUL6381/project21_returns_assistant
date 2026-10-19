@@ -1,0 +1,12 @@
+Return eligibility depends on the product category.
+
+Clothing may be returned within 15 calendar days after
+delivery if unused and its tags are attached.
+
+Electronics may be returned within seven calendar days
+after delivery if unused.
+
+Personal-care items are not returnable under this policy.
+
+The delivery date is day zero. 
+The final permitted day is included in the return window.
