@@ -1,5 +1,6 @@
 
 from pathlib import Path
+from sentence_transformers import SentenceTransformer
 
 # Folder containing the policy documents
 DATA_DIR = Path(__file__).parent / "data"
@@ -42,13 +43,42 @@ def split_into_chunks(documents, chunk_size=500, overlap=50):
     return chunks
 
 
+# if __name__ == "__main__":
+#     documents = load_policy_documents()
+#     chunks = split_into_chunks(documents)
+
+#     print("Documents loaded:", len(documents))
+#     print("Chunks created:", len(chunks))
+
+#     for i, chunk in enumerate(chunks, start=1):
+#         print(f"\nChunk {i} | Source: {chunk['source']}")
+#         print(chunk["text"])
+
+
+
+def generate_embeddings(chunks):
+    # Load a pretrained embedding model
+    model = SentenceTransformer("all-MiniLM-L6-v2")
+
+    # Extract text from chunks
+    texts = [chunk["text"] for chunk in chunks]
+
+    # Convert text into numerical vectors
+    embeddings = model.encode(
+        texts,
+        convert_to_numpy=True,
+        normalize_embeddings=True
+    )
+
+    return model, embeddings
+
+
 if __name__ == "__main__":
     documents = load_policy_documents()
     chunks = split_into_chunks(documents)
 
+    model, embeddings = generate_embeddings(chunks)
+
     print("Documents loaded:", len(documents))
     print("Chunks created:", len(chunks))
-
-    for i, chunk in enumerate(chunks, start=1):
-        print(f"\nChunk {i} | Source: {chunk['source']}")
-        print(chunk["text"])
+    print("Embeddings shape:", embeddings.shape)
