@@ -1,112 +1,203 @@
-<!doctype html>
+
+<!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      rel="stylesheet"
-      href="{{ url_for('static', filename='style.css') }}"
-    />
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
     <title>Returns Assistant</title>
-  </head>
-  <body>
-    <h1>Online Store Returns Assistant</h1>
-    <p>Check whether your product is eligible for a return.</p>
 
-    <form method="POST" action="/">
-      <label for="category">Product Category:</label>
-      <select id="category" name="category" required>
-        <option value="">Select category</option>
-        <option value="clothing">Clothing</option>
-        <option value="electronics">Electronics</option>
-        <option value="personal_care">Personal Care</option>
-      </select>
+    <link rel="stylesheet"
+          href="{{ url_for('static', filename='style.css') }}">
+</head>
 
-      <br /><br />
+<body>
 
-      <label for="delivery_date">Delivery Date:</label>
-      <input type="date" id="delivery_date" name="delivery_date" required />
+    <header class="page-header">
+        <span class="brand-icon">R</span>
+        <div>
+            <h1>Returns Assistant</h1>
+            <p>Your simple guide to returns, exchanges and refunds.</p>
+        </div>
+    </header>
 
-      <br /><br />
+    <main class="main-content">
 
-      <label for="request_date">Request Date:</label>
-      <input type="date" id="request_date" name="request_date" required />
+        <section class="welcome-section">
+            <span class="eyebrow">CUSTOMER SUPPORT</span>
+            <h2>Check your return eligibility</h2>
+            <p>Enter your product details to check the applicable return policy.</p>
+        </section>
 
-      <br /><br />
+        <section class="eligibility-card">
+            <h3>Product details</h3>
 
-      <p>Is the product unused?</p>
-      <label>
-        <input type="radio" name="unused" value="yes" required />
-        Yes
-      </label>
-      <label>
-        <input type="radio" name="unused" value="no" />
-        No
-      </label>
+            <form method="POST" action="/" class="eligibility-form">
 
-      <br /><br />
+                <div class="form-group">
+                    <label for="category">Product category</label>
+                    <select id="category" name="category" required>
+                        <option value="">Select a category</option>
+                        <option value="clothing">Clothing</option>
+                        <option value="electronics">Electronics</option>
+                        <option value="personal_care">Personal care</option>
+                    </select>
+                </div>
 
-      <p>Are the tags attached?</p>
-      <label>
-        <input type="radio" name="tags_attached" value="yes" required />
-        Yes
-      </label>
-      <label>
-        <input type="radio" name="tags_attached" value="no" />
-        No
-      </label>
+                <div class="form-row">
+                    <div class="form-group">
+                        <label for="delivery_date">Delivery date</label>
+                        <input type="date" id="delivery_date"
+                               name="delivery_date" required>
+                    </div>
 
-      <br /><br />
+                    <div class="form-group">
+                        <label for="request_date">Request date</label>
+                        <input type="date" id="request_date"
+                               name="request_date" required>
+                    </div>
+                </div>
 
-      <button type="submit">Check Return Eligibility</button>
-    </form>
+                <div class="form-group">
+                    <label>Is the product unused?</label>
+                    <div class="radio-options">
+                        <label>
+                            <input type="radio" name="unused"
+                                   value="yes" required> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="unused"
+                                   value="no"> No
+                        </label>
+                    </div>
+                </div>
 
-    <hr />
+                <div class="form-group">
+                    <label>Are the tags attached?</label>
+                    <div class="radio-options">
+                        <label>
+                            <input type="radio" name="tags_attached"
+                                   value="yes" required> Yes
+                        </label>
+                        <label>
+                            <input type="radio" name="tags_attached"
+                                   value="no"> No
+                        </label>
+                    </div>
+                    <p class="field-hint">
+                        Tags are considered for clothing returns.
+                    </p>
+                </div>
 
-    <h2>Returns Policy Chatbot</h2>
-    <p>Ask questions about returns, exchanges, and refunds.</p>
+                <button type="submit" class="primary-button">
+                    Check eligibility
+                </button>
+            </form>
+        </section>
 
-    <form method="POST" action="/chat">
-      <label for="question">Your Question:</label>
+        {% if result %}
+        <section class="eligibility-result">
+            {% if result.eligible %}
+                <h3 class="status-success">Eligible for return</h3>
+            {% else %}
+                <h3 class="status-error">Not eligible for return</h3>
+            {% endif %}
 
-      <input
-        type="text"
-        id="question"
-        name="question"
-        placeholder="When does refund processing begin?"
-        value="{{ question or '' }}"
-        required
-      />
+            <p>
+                <strong>Days since delivery:</strong>
+                {{ result.days_since_delivery }}
+            </p>
 
-      <button type="submit">Ask Assistant</button>
-    </form>
+            {% if result.reasons %}
+                <h4>Reasons</h4>
+                <ul>
+                    {% for reason in result.reasons %}
+                        <li>{{ reason }}</li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>Your product meets the return eligibility criteria.</p>
+            {% endif %}
+        </section>
+        {% endif %}
 
-    {% if chat_answer %}
-    <div class="result">
-      <h3>Assistant's Answer</h3>
-      <p>{{ chat_answer }}</p>
-    </div>
-    {% endif %} {% if result %}
-    <hr />
-    <h2>Return Eligibility Result</h2>
+        <footer class="page-footer">
+            Return eligibility does not submit a return request
+            or guarantee a refund.
+        </footer>
 
-    {% if result.eligible %}
-    <h3>Eligible for Return</h3>
-    {% else %}
-    <h3>Not Eligible for Return</h3>
-    {% endif %}
+    </main>
 
-    <p>Days Since Delivery: {{ result.days_since_delivery }}</p>
+    <!-- Right-side chatbot -->
+    <aside class="chat-widget" id="chatWidget">
 
-    {% if result.reasons %}
-    <h3>Reasons:</h3>
-    <ul>
-      {% for reason in result.reasons %}
-      <li>{{ reason }}</li>
-      {% endfor %}
-    </ul>
-    {% else %}
-    <p>No issues found. Your product meets the return criteria.</p>
-    {% endif %} {% endif %}
-  </body>
+        <div class="chat-header">
+            <div class="assistant-avatar">✦</div>
+
+            <div class="assistant-info">
+                <h2>Returns Assistant</h2>
+                <span><span class="online-dot"></span> Policy support</span>
+            </div>
+
+            <button type="button" id="clearChat"
+                    class="header-action" title="Clear conversation">
+                ↺
+            </button>
+
+            <button type="button" id="minimizeChat"
+                    class="header-action" title="Minimize chat">
+                −
+            </button>
+        </div>
+
+        <div class="chat-body" id="chatBody">
+
+            <div class="chat-intro">
+                <p>Hi there! 👋</p>
+                <p>Ask me anything about our return, exchange and refund policies.</p>
+            </div>
+
+            <div class="quick-questions">
+                <button type="button" class="quick-question">
+                    What is the clothing return window?
+                </button>
+
+                <button type="button" class="quick-question">
+                    When does refund processing begin?
+                </button>
+
+                <button type="button" class="quick-question">
+                    Are exchanges guaranteed?
+                </button>
+            </div>
+
+            <div id="chatMessages" aria-live="polite"></div>
+
+        </div>
+
+        <form id="chatForm" class="chat-input-area">
+            <input type="text" id="chatInput"
+                   placeholder="Ask about return policies..."
+                   autocomplete="off" required>
+
+            <button type="submit" id="sendButton"
+                    aria-label="Send message">
+                ➤
+            </button>
+        </form>
+
+        <p class="chat-disclaimer">
+            Answers are based on the provided store policies.
+        </p>
+
+    </aside>
+
+    <button type="button" id="openChat" class="open-chat-button"
+            aria-label="Open chat">
+        ✦ Chat with us
+    </button>
+
+    <script src="{{ url_for('static', filename='chat.js') }}"></script>
+
+</body>
 </html>

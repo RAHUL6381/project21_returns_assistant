@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, jsonify
 from return_checker import check_return_eligibility
 from rag import load_rag_resources, answer_question
 
@@ -31,16 +31,14 @@ def home():
 
 rag_model, faiss_index, policy_chunks = load_rag_resources()
 
+
 @app.route("/chat", methods=["POST"])
 def chat():
-    question = request.form.get("question", "").strip()
+    data = request.get_json(silent=True) or {}
+    question = data.get("question", "").strip()
 
     if not question:
-        return render_template(
-            "index.html",
-            result=None,
-            chat_answer="Please enter a question."
-        )
+        return jsonify({"error": "Please enter a question."}), 400
 
     try:
         answer = answer_question(
@@ -49,16 +47,18 @@ def chat():
             faiss_index,
             policy_chunks
         )
+
+        return jsonify({
+            "question": question,
+            "answer": answer
+        })
+
     except Exception:
         app.logger.exception("Chat request failed")
-        answer = "Sorry, I couldn't process your question. Please try again."
+        return jsonify({
+            "error": "Sorry, something went wrong. Please try again."
+        }), 500
 
-    return render_template(
-        "index.html",
-        result=None,
-        chat_answer=answer,
-        question=question
-    )
 
 
 
