@@ -16,13 +16,21 @@ def home():
         unused = request.form.get("unused") == "yes"
         tags_attached = request.form.get("tags_attached") == "yes"
 
-        result = check_return_eligibility(
-            category,
-            delivery_date,
-            request_date,
-            unused,
-            tags_attached
-        )
+        try:
+            result = check_return_eligibility(
+                category=category,
+                delivery_date=delivery_date,
+                request_date=request_date,
+                unused=unused,
+                tags_attached=tags_attached
+            )
+        except ValueError as e:
+            error = str(e)
+            return render_template(
+                "index.html",
+                result=None,
+                error=error
+            )
 
     return render_template("index.html", result=result)
 

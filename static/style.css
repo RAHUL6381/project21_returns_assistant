@@ -473,3 +473,12 @@ input[type="radio"] {
         bottom: 16px;
     }
 }
+
+.error-message {
+    color: #b91c1c;
+    background: #fee2e2;
+    border: 1px solid #fca5a5;
+    padding: 12px;
+    border-radius: 6px;
+    margin-top: 12px;
+}

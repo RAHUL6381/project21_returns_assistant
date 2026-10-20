@@ -95,6 +95,12 @@
             </form>
         </section>
 
+        {% if error %}
+            <div class="error-message">
+                {{ error }}
+            </div>
+        {% endif %}
+
         {% if result %}
         <section class="eligibility-result">
             {% if result.eligible %}
