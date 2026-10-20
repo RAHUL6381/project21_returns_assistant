@@ -102,7 +102,7 @@
         {% endif %}
 
         {% if result %}
-        <section class="eligibility-result">
+        <section class="eligibility-result" id="eligibility-result">
             {% if result.eligible %}
                 <h3 class="status-success">Eligible for return</h3>
             {% else %}
@@ -205,5 +205,17 @@
 
     <script src="{{ url_for('static', filename='chat.js') }}"></script>
 
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const result = document.getElementById("eligibility-result");
+            
+            if (result) {
+                result.scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+        });
+    </script>
 </body>
 </html>
