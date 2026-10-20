@@ -57,15 +57,3 @@ def check_return_eligibility(
         "days_since_delivery": days_since_delivery,
         "reasons": reasons
     }
-
-
-# Example usage
-result = check_return_eligibility(
-    category="clothing",
-    delivery_date="2026-10-01",
-    request_date="2026-10-15",
-    unused=True,
-    tags_attached=True
-)
-
-print(result)

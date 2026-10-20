@@ -125,39 +125,82 @@ def retrieve_relevant_chunks(question, model, index, chunks, top_k=3):
     return results
 
 
-def generate_answer(question, retrieved_chunks):
+
+def generate_answer(question, retrieved_chunks, conversation_history=None):
     context = "\n\n".join(
         f"Source: {chunk['source']}\n{chunk['text']}"
         for chunk in retrieved_chunks
     )
 
+    history_text = ""
+    if conversation_history:
+        history_text = "\n".join(
+            f"Customer: {item['question']}\n"
+            f"Assistant: {item['answer']}"
+            for item in conversation_history[-4:]
+        )
+
     prompt = f"""
-You are an Online Store Returns Policy Assistant.
+You are a friendly and professional Online Store Returns Assistant.
 
-Answer the user's question using ONLY the policy context below.
+Your goal is to help customers understand the store's policies
+with empathy, clarity, and honesty.
 
-Rules:
-1. Do not use outside knowledge.
-2. If the context does not contain the answer, clearly say:
-   "I could not find this information in the provided return policies."
-3. Do not invent policies, refund statuses, or stock availability.
-4. Keep answers clear and concise.
+CONVERSATION HISTORY:
+{history_text or "No previous conversation."}
 
-POLICY CONTEXT:
+RETRIEVED POLICY CONTEXT:
 {context}
 
-USER QUESTION:
+CURRENT CUSTOMER QUESTION:
 {question}
 
-ANSWER:
+FOLLOW THESE RULES:
+
+1. Be empathetic:
+   If the customer is upset, worried, or facing an emergency,
+   acknowledge their concern naturally before explaining the policy.
+
+2. Be conversational:
+   Answer the customer's actual question. Avoid repeating the
+   entire policy unless they ask for a summary.
+
+3. Follow the supplied policies:
+   Do not invent exceptions, eligibility rules, or refund guarantees.
+   Do not claim that a refund or return has been processed.
+
+4. Offer practical next steps:
+   If the policy does not allow the requested action, explain
+   the limitation politely.
+   If an exception or escalation process is not documented,
+   say that you cannot confirm whether one is available.
+   Suggest contacting the store's customer support to ask
+   whether a manual review is possible, without promising success.
+
+5. Handle missing information:
+   If the policy context does not answer the question, explain
+   what information is missing and what the customer can do next.
+   Do not simply repeat "I could not find this information."
+
+6. Stay within your capabilities:
+   You cannot issue refunds, access bank transactions, submit
+   return requests, or check live inventory.
+
+7. Keep responses concise, usually 2-5 sentences.
+
+8. Never blame, argue with, or judge the customer.
+
+Write a helpful response to the current question.
 """
 
     response = client.models.generate_content(
-        model="gemini-3.6-flash",
+        # model="gemini-3.8-flash",
+        model="gemini-3.5-flash-lite",
         contents=prompt
     )
 
     return response.text
+
 
 
 
@@ -178,15 +221,27 @@ def load_rag_resources():
     return model, index, chunks
 
 
-def answer_question(question, model, index, chunks):
+
+def answer_question(
+    question, model, index, chunks, conversation_history=None
+):
     relevant_chunks = retrieve_relevant_chunks(
         question, model, index, chunks, top_k=3
     )
 
     if not relevant_chunks:
-        return "I could not find relevant information in the provided return policies."
+        return (
+            "I'm sorry, I couldn't find a relevant policy passage "
+            "to answer that accurately. You can ask about return "
+            "eligibility, exchanges, or refund procedures."
+        )
 
-    return generate_answer(question, relevant_chunks)
+    return generate_answer(
+        question,
+        relevant_chunks,
+        conversation_history
+    )
+
 
 
 
@@ -197,19 +252,19 @@ if __name__ == "__main__":
     model, embeddings = generate_embeddings(chunks)
     index = store_embeddings(embeddings, chunks)
 
-    print("Documents loaded:", len(documents))
-    print("Chunks created:", len(chunks))
-    print("Embeddings shape:", embeddings.shape)
-    print("FAISS index saved successfully!")
+    # print("Documents loaded:", len(documents))
+    # print("Chunks created:", len(chunks))
+    # print("Embeddings shape:", embeddings.shape)
+    # print("FAISS index saved successfully!")
 
     
-    question = "When does refund processing begin?"
+    # question = "When does refund processing begin?"
 
-    results = retrieve_relevant_chunks(
-        question, model, index, chunks, top_k=3
-    )
+    # results = retrieve_relevant_chunks(
+    #     question, model, index, chunks, top_k=3
+    # )
 
-    for result in results:
-        print("\nSource:", result["source"])
-        print("Similarity:", round(result["score"], 3))
-        print("Text:", result["text"])
+    # for result in results:{'eligible': True, 'days_since_delivery': 14, 'reasons': []}
+    #     print("\nSource:", result["source"])
+    #     print("Similarity:", round(result["score"], 3))
+    #     print("Text:", result["text"])

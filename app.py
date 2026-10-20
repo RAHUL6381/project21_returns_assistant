@@ -24,8 +24,6 @@ def home():
             tags_attached
         )
 
-        print(result)
-
     return render_template("index.html", result=result)
 
 
@@ -36,17 +34,29 @@ rag_model, faiss_index, policy_chunks = load_rag_resources()
 def chat():
     data = request.get_json(silent=True) or {}
     question = data.get("question", "").strip()
+    conversation_history = data.get("history", [])
 
     if not question:
         return jsonify({"error": "Please enter a question."}), 400
 
+    if not isinstance(conversation_history, list):
+        conversation_history = []
+
+    conversation_history = [
+    item for item in conversation_history
+    if isinstance(item, dict)
+    and isinstance(item.get("question"), str)
+    and isinstance(item.get("answer"), str)
+    ][-4:]
+
     try:
         answer = answer_question(
-            question,
-            rag_model,
-            faiss_index,
-            policy_chunks
-        )
+        question,
+        rag_model,
+        faiss_index,
+        policy_chunks,
+        conversation_history
+    )
 
         return jsonify({
             "question": question,
